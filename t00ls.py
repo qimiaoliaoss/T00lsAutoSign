@@ -19,6 +19,7 @@ username = os.environ['USERNAME']       # 帐号
 password = os.environ['PASSWORD']       # 密码MD5 32位(小写)
 question_num = os.environ['QUESTION']   # 安全提问 参考下面
 question_answer = os.environ['ANSWER']  # 安全提问答案
+SCKEY = os.environ['SCKEY']             # Server酱sckey
 
 # 0 = 没有安全提问
 # 1 = 母亲的名字
@@ -73,19 +74,32 @@ def t00ls_sign(t00ls_hash, t00ls_cookies):
     return json.loads(response_sign.text)
 
 
+def sendMsg_by_wx(data):
+    datamsg = {"text": data, "desp": "T00ls签到成功！"}
+    requests.post("https://sc.ftqq.com/" + SCKEY + ".send", data=datamsg)
+
+
 def main():
     response_login = t00ls_login(username, password, question_num, question_answer)
     if response_login:
         response_sign = t00ls_sign(response_login[0], response_login[1])
         if response_sign['status'] == 'success':
             logging.warning("签到成功")
+            data = "T00ls签到成功"
+            sendMsg_by_wx(data)
         elif response_sign['message'] == 'alreadysign':
             logging.warning("今日已签到")
+            data = "T00ls今日已签到"
+            sendMsg_by_wx(data)
         else:
             logging.error("出现玄学问题了,签到失败")
+            data = "出现玄学问题了,T00ls签到失败"
+            sendMsg_by_wx(data)
             sys.exit(1)
     else:
         logging.error("登录失败,请检查输入资料是否正确")
+        data = "t00ls登录失败,请检查输入资料是否正确"
+        sendMsg_by_wx(data)
         sys.exit(1)
 
 

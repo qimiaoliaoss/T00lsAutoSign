@@ -28,4 +28,5 @@ jobs:
                 PASSWORD: ${{ secrets.PASSWORD }}
                 QUESTION: ${{ secrets.QUESTION }}
                 ANSWER: ${{ secrets.ANSWER }}
+                SCKEY: ${{ secrets.SCKEY }}
               run: python t00ls.py
